@@ -34,12 +34,43 @@ A high-performance Model Context Protocol (MCP) server that provides comprehensi
 
 ## 🚀 Quick Start
 
-### Option 1: Direct from GitHub (Recommended)
+### Option 1: Install from npm (Recommended)
 
 ```bash
+# Global installation
+npm install -g @willbohn/spider-mcp
+
+# Or use with npx (no installation needed)
+npx @willbohn/spider-mcp
+```
+
+### Option 2: Clone from GitHub
+
+**Windows:**
+```powershell
 # Clone and install
-git clone https://github.com/spider-rs/spider-mcp.git
+git clone https://github.com/willbohn/spider-mcp.git
 cd spider-mcp
+
+# Run the Windows installer (PowerShell)
+.\install-windows.ps1
+
+# Or use the batch file (Command Prompt)
+install-windows.bat
+
+# Test the installation
+$env:SPIDER_API_KEY="your_key"
+node test.js
+```
+
+**macOS/Linux:**
+```bash
+# Clone and install
+git clone https://github.com/willbohn/spider-mcp.git
+cd spider-mcp
+./install-local.sh
+
+# Or manually:
 npm install
 npm link
 
@@ -47,25 +78,31 @@ npm link
 SPIDER_API_KEY=your_key node test.js
 ```
 
-### Option 2: Direct Path Configuration
+### Option 3: Direct Path Configuration
 
 Skip installation and point directly to the built files in your MCP client configuration.
 
 ## ⚙️ Configuration
 
-### Claude Desktop Setup
+### Platform-Specific Setup Instructions
 
-Add to your Claude Desktop configuration file:
+<details>
+<summary><b>🪟 Windows Users</b></summary>
 
-**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`  
-**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+#### Claude Desktop (Windows)
 
-#### For Global Installation:
+1. **Find your configuration file:**
+   - Press `Win + R`, type `%APPDATA%\Claude` and press Enter
+   - Open `claude_desktop_config.json` (create it if it doesn't exist)
+
+2. **Add the Spider MCP configuration:**
+
 ```json
 {
   "mcpServers": {
     "spider": {
-      "command": "spider-mcp",
+      "command": "npx",
+      "args": ["@willbohn/spider-mcp"],
       "env": {
         "SPIDER_API_KEY": "your_spider_api_key_here"
       }
@@ -74,13 +111,14 @@ Add to your Claude Desktop configuration file:
 }
 ```
 
-#### For Direct Path:
+3. **Alternative: Using direct path (if npm doesn't work):**
+
 ```json
 {
   "mcpServers": {
     "spider": {
       "command": "node",
-      "args": ["C:\\path\\to\\spider-mcp\\dist\\index.js"],
+      "args": ["C:\\Users\\YourName\\spider-mcp\\dist\\index.js"],
       "env": {
         "SPIDER_API_KEY": "your_spider_api_key_here"
       }
@@ -88,6 +126,160 @@ Add to your Claude Desktop configuration file:
   }
 }
 ```
+
+**Note:** On Windows, use double backslashes (`\\`) in paths or forward slashes (`/`).
+
+#### Testing on Windows
+
+```powershell
+# PowerShell
+$env:SPIDER_API_KEY="your_key"
+node test.js
+
+# Command Prompt
+set SPIDER_API_KEY=your_key
+node test.js
+```
+
+</details>
+
+<details>
+<summary><b>🍎 macOS Users</b></summary>
+
+#### Claude Desktop (macOS)
+
+1. **Find your configuration file:**
+   ```bash
+   open ~/Library/Application\ Support/Claude/
+   ```
+   Open `claude_desktop_config.json` (create it if it doesn't exist)
+
+2. **Add the Spider MCP configuration:**
+
+```json
+{
+  "mcpServers": {
+    "spider": {
+      "command": "npx",
+      "args": ["@willbohn/spider-mcp"],
+      "env": {
+        "SPIDER_API_KEY": "your_spider_api_key_here"
+      }
+    }
+  }
+}
+```
+
+#### Testing on macOS
+
+```bash
+export SPIDER_API_KEY="your_key"
+node test.js
+```
+
+</details>
+
+<details>
+<summary><b>🐧 Linux Users</b></summary>
+
+#### Claude Desktop (Linux)
+
+1. **Find your configuration file:**
+   ```bash
+   # Location varies by distribution, commonly:
+   ~/.config/Claude/claude_desktop_config.json
+   # or
+   ~/.claude/claude_desktop_config.json
+   ```
+
+2. **Add the Spider MCP configuration:**
+
+```json
+{
+  "mcpServers": {
+    "spider": {
+      "command": "npx",
+      "args": ["@willbohn/spider-mcp"],
+      "env": {
+        "SPIDER_API_KEY": "your_spider_api_key_here"
+      }
+    }
+  }
+}
+```
+
+#### Testing on Linux
+
+```bash
+export SPIDER_API_KEY="your_key"
+node test.js
+```
+
+</details>
+
+### Other MCP Clients
+
+<details>
+<summary><b>Claude Code Configuration</b></summary>
+
+Claude Code automatically detects MCP servers. Simply:
+
+1. Install the package globally:
+   ```bash
+   npm install -g @willbohn/spider-mcp
+   ```
+
+2. Set your API key:
+   - **Windows (PowerShell):** `$env:SPIDER_API_KEY="your_key"`
+   - **Windows (CMD):** `set SPIDER_API_KEY=your_key`
+   - **macOS/Linux:** `export SPIDER_API_KEY="your_key"`
+
+3. The server will be available in Claude Code
+
+</details>
+
+<details>
+<summary><b>Cursor IDE Configuration</b></summary>
+
+Add to your Cursor settings:
+
+```json
+{
+  "mcp.servers": {
+    "spider": {
+      "command": "npx",
+      "args": ["@willbohn/spider-mcp"],
+      "env": {
+        "SPIDER_API_KEY": "your_spider_api_key_here"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>VS Code with Continue Extension</b></summary>
+
+Add to your Continue configuration:
+
+```json
+{
+  "mcpServers": [
+    {
+      "name": "spider",
+      "command": "npx",
+      "args": ["@willbohn/spider-mcp"],
+      "env": {
+        "SPIDER_API_KEY": "your_spider_api_key_here"
+      }
+    }
+  ]
+}
+```
+
+</details>
 
 ### Environment Variables
 
@@ -227,6 +419,25 @@ Transform HTML to clean, readable formats.
 
 Run the comprehensive test suite:
 
+### Windows
+
+```powershell
+# PowerShell
+$env:SPIDER_API_KEY="your_api_key_here"
+node test.js
+
+# With debug output
+$env:DEBUG="true"
+$env:SPIDER_API_KEY="your_api_key_here"
+node test.js
+
+# Command Prompt
+set SPIDER_API_KEY=your_api_key_here
+node test.js
+```
+
+### macOS/Linux
+
 ```bash
 # Set your API key
 export SPIDER_API_KEY=your_api_key_here
@@ -235,7 +446,23 @@ export SPIDER_API_KEY=your_api_key_here
 node test.js
 
 # With debug output
-DEBUG=true node test.js
+DEBUG=true SPIDER_API_KEY=your_api_key_here node test.js
+```
+
+### Test Suites
+
+```bash
+# Quick smoke tests
+npm run test:quick
+
+# Full comprehensive suite (100+ tests)
+npm run test:full
+
+# LinkedIn-specific tests
+npm run test:linkedin
+
+# Run specific category
+npm run test:category -- --category scraping
 ```
 
 ## 📊 API Response Format
@@ -311,6 +538,21 @@ spider-mcp/
 
 Enable detailed logging:
 
+**Windows (PowerShell):**
+```powershell
+$env:DEBUG="true"
+$env:SPIDER_API_KEY="your_key"
+node dist/index.js
+```
+
+**Windows (Command Prompt):**
+```cmd
+set DEBUG=true
+set SPIDER_API_KEY=your_key
+node dist/index.js
+```
+
+**macOS/Linux:**
 ```bash
 DEBUG=true SPIDER_API_KEY=your_key node dist/index.js
 ```
@@ -359,11 +601,12 @@ MIT License - see [LICENSE](LICENSE) file for details
 - [Spider Cloud Documentation](https://spider.cloud/docs)
 - [API Reference](https://spider.cloud/docs/api)
 - [MCP Specification](https://modelcontextprotocol.io)
-- [GitHub Repository](https://github.com/spider-rs/spider-mcp)
+- [GitHub Repository](https://github.com/willbohn/spider-mcp)
+- [npm Package](https://www.npmjs.com/package/@willbohn/spider-mcp)
 
 ## 💬 Support
 
-- **MCP Server Issues**: [GitHub Issues](https://github.com/spider-rs/spider-mcp/issues)
+- **MCP Server Issues**: [GitHub Issues](https://github.com/willbohn/spider-mcp/issues)
 - **Spider API Support**: [spider.cloud/support](https://spider.cloud/support)
 - **API Status**: [status.spider.cloud](https://status.spider.cloud)
 
