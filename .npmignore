@@ -1,0 +1,35 @@
+# Source files
+src/
+*.ts
+!*.d.ts
+
+# Development files
+test/
+examples/
+*.bat
+test-*.js
+test.js
+benchmark.js
+TEST_REPORT.md
+.github/
+.claude/
+
+# Config files
+tsconfig.json
+.env
+.env.*
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Documentation
+SETUP.md
+PUBLISHING.md
+
+# Build artifacts we don't need
+*.map

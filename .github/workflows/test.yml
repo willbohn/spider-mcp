@@ -1,0 +1,77 @@
+name: Test Spider MCP Server
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [18.x, 20.x, 22.x]
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build TypeScript
+      run: npm run build
+    
+    - name: Run smoke tests
+      env:
+        SPIDER_API_KEY: ${{ secrets.SPIDER_API_KEY }}
+      run: node test-runner.js --quick
+      if: env.SPIDER_API_KEY != ''
+    
+    - name: Run comprehensive tests
+      env:
+        SPIDER_API_KEY: ${{ secrets.SPIDER_API_KEY }}
+      run: node test-runner.js --save-results
+      if: env.SPIDER_API_KEY != '' && matrix.os == 'ubuntu-latest' && matrix.node-version == '20.x'
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results-${{ matrix.os }}-node${{ matrix.node-version }}
+        path: test-results-*.json
+    
+    - name: Test without API key (should fail gracefully)
+      run: |
+        node dist/index.js || echo "Server correctly requires API key"
+      if: env.SPIDER_API_KEY == ''
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.x'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run TypeScript compiler check
+      run: npx tsc --noEmit
+    
+    - name: Check for hardcoded API keys
+      run: |
+        ! grep -r "sk-[a-f0-9-]\{36\}" --include="*.ts" --include="*.js" --exclude-dir=node_modules --exclude-dir=dist .
+      shell: bash

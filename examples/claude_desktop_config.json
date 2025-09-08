@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "spider": {
+      "command": "node",
+      "args": ["C:\\path\\to\\spider-mcp\\dist\\index.js"],
+      "env": {
+        "SPIDER_API_KEY": "your_spider_api_key_here"
+      }
+    }
+  }
+}

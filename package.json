@@ -1,0 +1,62 @@
+{
+  "name": "@willbohn/spider-mcp",
+  "version": "1.1.0",
+  "description": "Model Context Protocol server for Spider Cloud web scraping and crawling API - LinkedIn profiles, anti-bot bypass, and more",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "spider-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "prepare": "npm run build",
+    "test": "node test.js",
+    "test:quick": "node test-runner.js --quick",
+    "test:full": "node test-runner.js",
+    "test:linkedin": "node test-runner.js --linkedin",
+    "test:category": "node test-runner.js --category",
+    "benchmark": "node benchmark.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "spider",
+    "web-scraping",
+    "web-crawling",
+    "ai",
+    "llm",
+    "claude",
+    "anthropic"
+  ],
+  "author": "Will Bohn",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/willbohn/spider-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/willbohn/spider-mcp/issues"
+  },
+  "homepage": "https://github.com/willbohn/spider-mcp#readme",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

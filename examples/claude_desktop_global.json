@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "spider": {
+      "command": "spider-mcp",
+      "env": {
+        "SPIDER_API_KEY": "your_spider_api_key_here"
+      }
+    }
+  }
+}
