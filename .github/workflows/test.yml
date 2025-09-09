@@ -51,8 +51,22 @@ jobs:
     
     - name: Test without API key (should fail gracefully)
       run: |
+        node dist/index.js
+        if ($LASTEXITCODE -ne 0) { 
+          Write-Host "Server correctly requires API key" 
+          exit 0 
+        } else {
+          Write-Host "ERROR: Server should have failed without API key"
+          exit 1
+        }
+      shell: pwsh
+      if: env.SPIDER_API_KEY == '' && matrix.os == 'windows-latest'
+    
+    - name: Test without API key (should fail gracefully) - Unix
+      run: |
         node dist/index.js || echo "Server correctly requires API key"
-      if: env.SPIDER_API_KEY == ''
+      shell: bash
+      if: env.SPIDER_API_KEY == '' && matrix.os != 'windows-latest'
 
   lint:
     runs-on: ubuntu-latest
