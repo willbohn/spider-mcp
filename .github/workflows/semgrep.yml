@@ -1,0 +1,45 @@
+name: Semgrep
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  schedule:
+    - cron: '37 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: semgrep-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  semgrep:
+    name: Semgrep
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    container:
+      image: semgrep/semgrep:1.187.0@sha256:0c8dfa7aa1ca8c50233ec9110e8cd88d139dedd603d56507493f74c6f4b3e062
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          # PRs use GitHub's merge commit; its base parent is within depth two.
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Scan source
+        shell: bash
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          args=(scan --config p/ci --error --strict --metrics=off --disable-version-check --no-trace)
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            [[ "$PR_HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]
+            [[ "$(git rev-parse --verify HEAD^2)" == "$PR_HEAD_SHA" ]]
+            args+=(--baseline-commit "$(git rev-parse --verify HEAD^1)")
+          fi
+          semgrep "${args[@]}" .
