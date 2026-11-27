@@ -32,14 +32,14 @@ jobs:
       - name: Scan source
         shell: bash
         env:
-          BASELINE_COMMIT: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           args=(scan --config p/ci --error --strict --metrics=off --disable-version-check --no-trace)
-          if [[ -n "$BASELINE_COMMIT" ]]; then
-            [[ "$BASELINE_COMMIT" =~ ^[0-9a-f]{40}$ ]]
-            git cat-file -e "${BASELINE_COMMIT}^{commit}"
-            args+=(--baseline-commit "$BASELINE_COMMIT")
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            [[ "$PR_HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]
+            [[ "$(git rev-parse --verify HEAD^2)" == "$PR_HEAD_SHA" ]]
+            args+=(--baseline-commit "$(git rev-parse --verify HEAD^1)")
           fi
           semgrep "${args[@]}" .
